@@ -28,13 +28,38 @@ def my_replace(srch_pattrn, rpl_pattrn, mylist):
 			k = re.sub(srch_pattrn, rpl_pattrn, k)
 			elem = k.split(',')
 			res_contacts.append(elem)
+		else:
+			res_contacts.append(elem)
 	return res_contacts
 
+def glue_two_elems(elem1,elem2):
+	'''return only one element with maximum info'''
+	i = 0
+	while i < len(elem1):
+		if elem1[i] and elem2[i] is not '':
+			if elem1[i] != elem2[i]:
+				elem1[i] = elem1[i] + '/' + elem2 [i]
+		i = i + 1
+	return elem1
+
+
 def my_uniq(mylist):
+	'''uniq bu ID = lastname '''
 	res_contacts = []
-	for elem in mylist:
-		for 
-		pass
+	i = 0
+	while i < len(mylist):
+		print('i:', i, '   mylist[i]: ', mylist[i])
+		if mylist[i][0] not in res_contacts:
+			res_contacts.append(mylist[i])
+		else:
+			same_lastname_index = [k for k, j in enumerate(mylist) if j == mylist[i]]
+			print('same index init: ', same_lastname_index)
+			same_lastname_index.pop(str(i))
+			print('same index pop : ', same_lastname_index)
+			for el in same_lastname_index:
+				print('        Index:', el, ' index list: ', same_lastname_index)
+				res = glue_two_elems(mylist[i],mylist[int(el)])
+		i = i + 1
 	return res_contacts
 
 # TODO 2: сохраните получившиеся данные в другой файл
@@ -63,4 +88,15 @@ if __name__ == '__main__':
 		r"(\+)*(\d)(\s)*(\(*)(\d\d\d)(\)*)(\s*)(\-*)(\d\d\d)(\-*)(\d\d)(\-*)(\d\d)(\s*)(\(*)(доб\.)*(\s*)(\d*)(\))*"
 		, r"+\2(\5)\9-\11-\13 \16\18"
 		, rename1)
-	print(rename2)
+	#print(rename2)
+	print(my_uniq(rename2))
+	demolist = [
+	['Лагунцов', 'Иван', 'Алексеевич', '', 'Минфин', '', '+7(495)913-11-11 доб.0792', ''], 
+	['Лагунцов', 'Иван', '', '', 'Минпром', '', '', 'Ivan.Laguntcov@minfin.ru']
+	]
+	dem1 = ['Лагунцов', 'Иван', 'Алексеевич', '', 'Минфин', '', '+7(495)913-11-11 доб.0792', '']
+	dem2 = ['Лагунцов', 'Иван', '', '', 'Минпром', '', '', 'Ivan.Laguntcov@minfin.ru']
+	dem3 = ['Мартиняхин', 'Виталий', 'Геннадьевич', '', 'ФНС', '', '+7(495)913-00-37 ', '']
+	dem4 = ['Мартиняхин', 'Виталий', 'Геннадьевич', 'ФНС', 'cоветник отдела Интернет проектов Управления информационных технологий', '', '', '']
+	print('Just glue1:', glue_two_elems(dem1, dem2))
+	print('Just glue2:', glue_two_elems(dem3, dem4))
