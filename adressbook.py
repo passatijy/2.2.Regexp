@@ -34,44 +34,57 @@ def my_replace(srch_pattrn, rpl_pattrn, mylist):
 
 def glue_two_elems(elem1,elem2):
 	'''return only one element with maximum info'''
+	one = elem1.copy()
+	two = elem2.copy()
 	i = 0
 	while i < len(elem1):
-		if elem1[i] and elem2[i] is not '':
-			if elem1[i] != elem2[i]:
-				elem1[i] = elem1[i] + '/' + elem2 [i]
+#		if one[i] and two[i] is not '':
+		if one[i] is not '':
+			if two[i] is not '':
+				if one[i] != two[i]:
+					one[i] = one[i] + '/' + two[i]
+		else:
+			if two[i] is not '':
+				one[i] = two[i]
 		i = i + 1
-	return elem1
+	return one
 
 
 def my_uniq(mylist):
 	'''uniq bu ID = lastname '''
-	res_contacts = []
+	templist = mylist.copy()
+	res_contacts=[]
 	i = 0
-	while i < len(mylist):
-		print('i:', i, '   mylist[i]: ', mylist[i])
-		if mylist[i][0] not in res_contacts:
-			res_contacts.append(mylist[i])
-		else:
-			same_lastname_index = [k for k, j in enumerate(mylist) if j == mylist[i]]
-			print('same index init: ', same_lastname_index)
-			same_lastname_index.pop(str(i))
-			print('same index pop : ', same_lastname_index)
-			for el in same_lastname_index:
-				print('        Index:', el, ' index list: ', same_lastname_index)
-				res = glue_two_elems(mylist[i],mylist[int(el)])
+	while i < len(templist):
+		res_elem = templist[i]
+		#print('Перебираем, элемент номер:',i,'является:',templist[i])
+		k = i + 1
+		while k < len(templist):
+			#print(' ищем совпадения, рез. элемент:', res_elem,'элемент k:', templist[k])
+			if res_elem[0] == templist[k][0]:
+				#print(' совпадение найдено')
+				res_elem = glue_two_elems(res_elem,templist[k])
+				templist.remove(templist[k])
+				#print('    результирующий элемент для добавления:',res_elem)
+			#else:
+				#print(' совпадение не найдено')
+			k = k + 1
+		res_contacts.append(res_elem)
 		i = i + 1
 	return res_contacts
 
 # TODO 2: сохраните получившиеся данные в другой файл
 # код для записи файла в формате CSV
-with open("phonebook.csv", "w", encoding="utf-8") as f:
-  datawriter = csv.writer(f, delimiter=',')
-  # Вместо contacts_list подставьте свой список
-  datawriter.writerows(contacts_list)
+def filewriter(outputlist):
+	with open("phonebook.csv", "w", encoding="utf-8") as f:
+		datawriter = csv.writer(f, delimiter=',')
+		# Вместо contacts_list подставьте свой список
+		datawriter.writerows(outputlist)
 
 
 if __name__ == '__main__':
-	print(contacts_list)
+	for k in contacts_list:
+		print('Initial list:', k)
 	# first call r"(^([А-Яа-я])*)(\s)([А-Яа-я])", r"\1,\4", k
 	rename = my_replace(
 		r"(^([А-Яа-я])*)(\s)([А-Яа-я])"
@@ -89,14 +102,8 @@ if __name__ == '__main__':
 		, r"+\2(\5)\9-\11-\13 \16\18"
 		, rename1)
 	#print(rename2)
-	print(my_uniq(rename2))
-	demolist = [
-	['Лагунцов', 'Иван', 'Алексеевич', '', 'Минфин', '', '+7(495)913-11-11 доб.0792', ''], 
-	['Лагунцов', 'Иван', '', '', 'Минпром', '', '', 'Ivan.Laguntcov@minfin.ru']
-	]
-	dem1 = ['Лагунцов', 'Иван', 'Алексеевич', '', 'Минфин', '', '+7(495)913-11-11 доб.0792', '']
-	dem2 = ['Лагунцов', 'Иван', '', '', 'Минпром', '', '', 'Ivan.Laguntcov@minfin.ru']
-	dem3 = ['Мартиняхин', 'Виталий', 'Геннадьевич', '', 'ФНС', '', '+7(495)913-00-37 ', '']
-	dem4 = ['Мартиняхин', 'Виталий', 'Геннадьевич', 'ФНС', 'cоветник отдела Интернет проектов Управления информационных технологий', '', '', '']
-	print('Just glue1:', glue_two_elems(dem1, dem2))
-	print('Just glue2:', glue_two_elems(dem3, dem4))
+	print('========================')
+	result = my_uniq(rename2)
+	for k in result:
+		print('Result list:', k)
+	filewriter(result)
